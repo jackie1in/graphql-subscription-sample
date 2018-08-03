@@ -1,0 +1,3 @@
+rootProject.ext.springBootVersion = '2.0.0.RELEASE'
+rootProject.ext.GRAPHQL_SPRING_BOOT_STARTER_VERSION = "5.0.1"
+rootProject.ext.GRAPHQL_JAVA_TOOLS_VERSION = '5.2.3'

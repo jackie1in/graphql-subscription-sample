@@ -1,0 +1,38 @@
+group 'com.bdgx'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+buildscript {
+    apply from: "$rootDir/blessedDeps.gradle"
+
+    repositories {
+        maven { url "http://192.168.1.250:8081/nexus/content/repositories/central" }
+        maven { url "http://192.168.1.250:8081/nexus/content/repositories/releases" }
+        maven { url "http://192.168.1.250:8081/nexus/content/repositories/snapshots" }
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+repositories {
+    maven { url "http://192.168.1.250:8081/nexus/content/repositories/central" }
+    maven { url "http://192.168.1.250:8081/nexus/content/repositories/releases" }
+    maven { url "http://192.168.1.250:8081/nexus/content/repositories/snapshots" }
+}
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+
+    compile("com.graphql-java:graphql-java-tools:$GRAPHQL_JAVA_TOOLS_VERSION")
+
+    compile("com.graphql-java:graphql-spring-boot-starter:$GRAPHQL_SPRING_BOOT_STARTER_VERSION")
+
+    compile("com.graphql-java:graphiql-spring-boot-starter:$GRAPHQL_SPRING_BOOT_STARTER_VERSION")
+
+    compile "io.reactivex.rxjava2:rxjava:2.1.5"
+
+    compile("org.springframework.boot:spring-boot-starter-web:$springBootVersion")
+
+    testCompile "org.springframework.boot:spring-boot-starter-test:$springBootVersion"
+}
