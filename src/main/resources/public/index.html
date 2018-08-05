@@ -150,23 +150,30 @@
             <li> MSFT</li>
             <li>GOOGL </li>
             </ol>
-            订阅其中的TEAM，IBM两种
+            订阅其中的TEAM，IBM两种,<span style="color: red">其中价格上升时显示为绿色，下降显示红色，注意查看</span>
             </p>
-            <p>当浏览器客户端订阅，服务端使用rxjava2实现的推送系统服不断的推送数据更新</p>
+            <p>当浏览器客户端订阅，服务端使用rxjava2/spring reactor实现的推送系统服不断的推送数据更新</p>
             <p>使用的查询例子如下 :</p>
+            <h5>请求</h5>
             <pre>
-subscription stockCodeSubscription {
-    stockFluxQuotes(stockCodes:["TEAM", "IBM"]) {
-        dateTime
-        stockCode
-        stockPrice
-        stockPriceChange
-    }
+subscription stockFluxQuotes($stockCodes: [String]) {
+  stockFluxQuotes(stockCodes: $stockCodes) {
+    dateTime
+    stockCode
+    stockPrice
+    stockPriceChange
+  }
+}
+            </pre>
+            <h5>参数</h5>
+            <pre>
+{
+  "stockCodes": ["TEAM", "IBM"]
 }
             </pre>
         </div>
         <div class="col-sm-8">
-            <h3>Stock Price Updates</h3>
+            <h3>库存价格更新</h3>
             <div class="stockTicker">Pending subscription...</div>
             <div class="networking">📡</div>
         </div>

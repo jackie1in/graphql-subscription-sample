@@ -31,7 +31,7 @@ public class StockTickerPublisher {
 
     private static final Logger LOG = LoggerFactory.getLogger(StockTickerPublisher.class);
 
-    private final Flux<StockPriceUpdate> fluxPublisher;
+    private Flux<StockPriceUpdate> fluxPublisher;
 
     private Flowable<StockPriceUpdate> publisher;
     public StockTickerPublisher() {
@@ -54,8 +54,8 @@ public class StockTickerPublisher {
         SampleProducer producer = new SampleProducer(SampleProducer.BOOTSTRAP_SERVERS);
         ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
         executorService.scheduleAtFixedRate(newStockTick(producer), 0, 2, TimeUnit.SECONDS);
-        SampleConsumer consumer = new SampleConsumer(SampleConsumer.BOOTSTRAP_SERVERS);
-        fluxPublisher = consumer.consumeMessages("kafka-testing");
+        //SampleConsumer consumer = new SampleConsumer(SampleConsumer.BOOTSTRAP_SERVERS);
+        //fluxPublisher = consumer.consumeMessages("kafka-testing");
     }
 
     private Runnable newStockTick(ObservableEmitter<StockPriceUpdate> emitter) {

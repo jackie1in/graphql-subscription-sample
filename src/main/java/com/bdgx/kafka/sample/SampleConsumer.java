@@ -70,25 +70,19 @@ public class SampleConsumer {
                 .addAssignListener(partitions -> log.debug("onPartitionsAssigned {}", partitions))
                 .addRevokeListener(partitions -> log.debug("onPartitionsRevoked {}", partitions));
         Flux<ReceiverRecord<String, StockPriceUpdate>> kafkaFlux = KafkaReceiver.create(options).receive();
-//        kafkaFlux.subscribe(record -> {
-//            ReceiverOffset offset = record.receiverOffset();
-//            System.out.printf("Received message: topic-partition=%s offset=%d timestamp=%s key=%s value=%s\n",
-//                    offset.topicPartition(),
-//                    offset.offset(),
-//                    dateFormat.format(new Date(record.timestamp())),
-//                    record.key(),
-//                    record.value());
-//            offset.acknowledge();
-//        });
         return kafkaFlux
+                .doOnNext(record ->{
+                    ReceiverOffset offset = record.receiverOffset();
+                    System.out.printf("Received message: topic-partition=%s offset=%d timestamp=%s key=%s value=%s\n",
+                            offset.topicPartition(),
+                            offset.offset(),
+                            dateFormat.format(new Date(record.timestamp())),
+                            record.key(),
+                            record.value());
+                    offset.acknowledge();
+                })
                 .map(ReceiverRecord::value)
-                .publishOn(scheduler);
-    }
-    public Mono<Void> storeInDB(StockPriceUpdate update) {
-        log.info("Successfully processed update with code {} from Kafka", update.getStockCode());
-        return Mono.empty();
-    }
-    public void close() {
-        scheduler.dispose();
+                .publishOn(scheduler)
+                .doOnCancel(() -> scheduler.dispose());
     }
 }
