@@ -79,7 +79,7 @@
                     "}";
                 var graphqlMsg = {
                     query: query,
-                    variables: {stockCodes: ["TEAM", "IBM"]}
+                    variables: JSON.parse($("#variables").html().replace("\<br\>",""))
                 };
                 exampleSocket.send(JSON.stringify(graphqlMsg));
             };
@@ -124,6 +124,9 @@
         }
 
         window.addEventListener("load", subscribeToStocks);
+        $(function(){
+            $("#variables").on("blur",subscribeToStocks);
+        });
     </script>
 </head>
 <body>
@@ -150,7 +153,7 @@
             <li> MSFT</li>
             <li>GOOGL </li>
             </ol>
-            订阅其中的TEAM，IBM两种,<span style="color: red">其中价格上升时显示为绿色，下降显示红色，注意查看</span>
+            订阅其中的TEAM，IBM两种,<span style="color: red">其中价格上升时显示为绿色，下降显示红色，注意左下角的📡会闪一下</span>
             </p>
             <p>当浏览器客户端订阅，服务端使用rxjava2/spring reactor实现的推送系统服不断的推送数据更新</p>
             <p>使用的查询例子如下 :</p>
@@ -165,8 +168,8 @@ subscription stockFluxQuotes($stockCodes: [String]) {
   }
 }
             </pre>
-            <h5>参数</h5>
-            <pre>
+            <h5>参数,<span style="color: red">可以点击修改，注意别写错了</span></h5>
+            <pre contenteditable="true" id="variables">
 {
   "stockCodes": ["TEAM", "IBM"]
 }
