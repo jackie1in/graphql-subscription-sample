@@ -133,7 +133,7 @@
 
 <div class="jumbotron text-center">
     <h2>graphql-java Subscriptions</h2>
-    <p>graphql-java subscriptions使用websocket不断更新商品价格</p>
+    <p>graphql-java subscriptions使用websocket不断的获取价格更新后的数据</p>
 </div>
 
 
@@ -155,7 +155,7 @@
             </ol>
             订阅其中的TEAM，IBM两种,<span style="color: red">其中价格上升时显示为绿色，下降显示红色，注意左下角的📡会闪一下</span>
             </p>
-            <p>当浏览器客户端订阅，服务端使用rxjava2/spring reactor实现的推送系统服不断的推送数据更新</p>
+            <p>当浏览器客户端订阅，服务端使用kafka、rxjava2/spring reactor实现的推送系统会不断的推送数据更新</p>
             <p>使用的查询例子如下 :</p>
             <h5>请求</h5>
             <pre>
