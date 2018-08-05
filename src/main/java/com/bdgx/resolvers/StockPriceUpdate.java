@@ -6,10 +6,13 @@ import java.time.format.DateTimeFormatter;
 
 public class StockPriceUpdate {
 
-    private final String stockCode;
-    private final String dateTime;
-    private final BigDecimal stockPrice;
-    private final BigDecimal stockPriceChange;
+    private  String stockCode;
+    private  String dateTime;
+    private  BigDecimal stockPrice;
+    private  BigDecimal stockPriceChange;
+
+    public StockPriceUpdate() {
+    }
 
     public StockPriceUpdate(String stockCode, LocalDateTime dateTime, BigDecimal stockPrice, BigDecimal stockPriceChange) {
         this.stockCode = stockCode;
@@ -22,15 +25,41 @@ public class StockPriceUpdate {
         return stockCode;
     }
 
+    public void setStockCode(String stockCode) {
+        this.stockCode = stockCode;
+    }
+
     public String getDateTime() {
         return dateTime;
+    }
+
+    public void setDateTime(String dateTime) {
+        this.dateTime = dateTime;
     }
 
     public BigDecimal getStockPrice() {
         return stockPrice;
     }
 
+    public void setStockPrice(BigDecimal stockPrice) {
+        this.stockPrice = stockPrice;
+    }
+
     public BigDecimal getStockPriceChange() {
         return stockPriceChange;
+    }
+
+    public void setStockPriceChange(BigDecimal stockPriceChange) {
+        this.stockPriceChange = stockPriceChange;
+    }
+
+    @Override
+    public String toString() {
+        return "StockPriceUpdate{" +
+                "stockCode='" + stockCode + '\'' +
+                ", dateTime='" + dateTime + '\'' +
+                ", stockPrice=" + stockPrice +
+                ", stockPriceChange=" + stockPriceChange +
+                '}';
     }
 }

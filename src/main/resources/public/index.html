@@ -69,8 +69,8 @@
                 networkBlip();
                 console.log("web socket opened");
 
-                var query ="subscription stockQuotes($stockCodes: [String]){\n" +
-                    "  stockQuotes(stockCodes: $stockCodes){\n" +
+                var query ="subscription stockFluxQuotes($stockCodes: [String]){\n" +
+                    "  stockFluxQuotes(stockCodes: $stockCodes){\n" +
                     "    dateTime\n" +
                     "    stockCode\n" +
                     "    stockPrice\n" +
@@ -90,7 +90,7 @@
                 networkBlip();
 
                 var data = JSON.parse(event.data);
-                var msg = data.data.stockQuotes;
+                var msg = data.data.stockFluxQuotes;
                 var stockCode = msg.stockCode;
                 var stockList = STOCK_CODES_UPDATES[stockCode];
                 if (stockList) {
@@ -155,8 +155,8 @@
             <p>当浏览器客户端订阅，服务端使用rxjava2实现的推送系统服不断的推送数据更新</p>
             <p>使用的查询例子如下 :</p>
             <pre>
-subscription StockCodeSubscription {
-    stockQuotes(stockCodes:["TEAM", "IBM"]) {
+subscription stockCodeSubscription {
+    stockFluxQuotes(stockCodes:["TEAM", "IBM"]) {
         dateTime
         stockCode
         stockPrice

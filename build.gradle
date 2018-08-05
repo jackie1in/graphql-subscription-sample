@@ -11,15 +11,21 @@ buildscript {
         maven { url "http://192.168.1.250:8081/nexus/content/repositories/central" }
         maven { url "http://192.168.1.250:8081/nexus/content/repositories/releases" }
         maven { url "http://192.168.1.250:8081/nexus/content/repositories/snapshots" }
+        maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
+
+        mavenCentral()
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
     }
 }
 repositories {
+    maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
     maven { url "http://192.168.1.250:8081/nexus/content/repositories/central" }
     maven { url "http://192.168.1.250:8081/nexus/content/repositories/releases" }
     maven { url "http://192.168.1.250:8081/nexus/content/repositories/snapshots" }
+    maven { url 'http://repo.spring.io/milestone' }
+    mavenCentral()
 }
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
@@ -35,4 +41,9 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-web:$springBootVersion")
 
     testCompile "org.springframework.boot:spring-boot-starter-test:$springBootVersion"
+
+    compile "io.projectreactor.kafka:reactor-kafka:1.0.0.RELEASE"
+
+    // a adapter for spring reactor and rxjava2
+    compile 'io.projectreactor.addons:reactor-adapter:3.1.6.RELEASE'
 }
