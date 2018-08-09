@@ -1,26 +1,17 @@
 package com.bdgx.kafka.sample;
 
 import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
 
-import com.bdgx.kafka.SampleScenarios;
 import com.bdgx.kafka.serdes.StockPriceUpdateSerDes;
 import com.bdgx.resolvers.StockPriceUpdate;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.common.serialization.IntegerDeserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import reactor.core.Disposable;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
+import reactor.core.publisher.FluxSink;
 import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 import reactor.kafka.receiver.ReceiverOptions;
@@ -41,7 +32,7 @@ import reactor.kafka.receiver.ReceiverOffset;
  * </ol>
  */
 public class SampleConsumer {
-
+    private final Object lock = new Object();
     private static final Logger log = LoggerFactory.getLogger(SampleConsumer.class.getName());
 
     public static final String BOOTSTRAP_SERVERS = "localhost:9092";
@@ -50,6 +41,8 @@ public class SampleConsumer {
     private final ReceiverOptions<String, StockPriceUpdate> receiverOptions;
     private final SimpleDateFormat dateFormat;
     private final Scheduler scheduler;
+    private Map<String,Disposable> disposableMap = new HashMap<>();
+    private Map<String,List<FluxSink<StockPriceUpdate>>> sinks = new HashMap<>();
 
     public SampleConsumer(String bootstrapServers) {
         Map<String, Object> props = new HashMap<>();
@@ -65,24 +58,37 @@ public class SampleConsumer {
         this.scheduler = Schedulers.newSingle("sample", true);
     }
 
-    public Flux<StockPriceUpdate> consumeMessages(String topic) {
-        ReceiverOptions<String, StockPriceUpdate> options = receiverOptions.subscription(Collections.singleton(topic))
-                .addAssignListener(partitions -> log.debug("onPartitionsAssigned {}", partitions))
-                .addRevokeListener(partitions -> log.debug("onPartitionsRevoked {}", partitions));
-        Flux<ReceiverRecord<String, StockPriceUpdate>> kafkaFlux = KafkaReceiver.create(options).receive();
-        return kafkaFlux
-                .doOnNext(record ->{
-                    ReceiverOffset offset = record.receiverOffset();
-                    System.out.printf("Received message: topic-partition=%s offset=%d timestamp=%s key=%s value=%s\n",
-                            offset.topicPartition(),
-                            offset.offset(),
-                            dateFormat.format(new Date(record.timestamp())),
-                            record.key(),
-                            record.value());
-                    offset.acknowledge();
-                })
-                .map(ReceiverRecord::value)
-                .publishOn(scheduler)
-                .doOnCancel(() -> scheduler.dispose());
+    public void consumeMessages(String topic,FluxSink<StockPriceUpdate> sink) {
+        if (disposableMap.get(topic) == null) {
+            synchronized (lock) {
+                if (sinks.get(topic) == null){
+                    List<FluxSink<StockPriceUpdate>> sinkList = new LinkedList<>();
+                    sinkList.add(Objects.requireNonNull(sink));
+                    sinks.put(topic,sinkList);
+                }
+                ReceiverOptions<String, StockPriceUpdate> options = receiverOptions.subscription(Collections.singleton(topic))
+                        .addAssignListener(partitions -> log.debug("onPartitionsAssigned {}", partitions))
+                        .addRevokeListener(partitions -> log.debug("onPartitionsRevoked {}", partitions));
+                Disposable disposable = KafkaReceiver.create(options)
+                        .receive()
+                        .doOnNext(record ->{
+                            ReceiverOffset offset = record.receiverOffset();
+                            System.out.printf("Received message: topic-partition=%s offset=%d timestamp=%s key=%s value=%s\n",
+                                    offset.topicPartition(),
+                                    offset.offset(),
+                                    dateFormat.format(new Date(record.timestamp())),
+                                    record.key(),
+                                    record.value());
+                            offset.acknowledge();
+                            sinks.get(topic).forEach(sink1 -> sink1.next(record.value()));
+                        })
+                        .map(ReceiverRecord::value)
+                        .publishOn(scheduler)
+                        .doOnSubscribe(s -> System.out.println("subscribed to source"))
+                        .doOnCancel(() -> scheduler.dispose())
+                        .subscribe();
+                disposableMap.put(topic,disposable);
+            }
+        }
     }
 }

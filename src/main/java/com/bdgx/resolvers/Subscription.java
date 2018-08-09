@@ -24,7 +24,9 @@ class Subscription implements GraphQLSubscriptionResolver {
 
     Publisher<StockPriceUpdate> stockFluxQuotes(List<String> stockCodes) {
         SampleConsumer consumer = new SampleConsumer(SampleConsumer.BOOTSTRAP_SERVERS);
-        return consumer.consumeMessages("kafka-testing").filter(update -> stockCodes.contains(update.getStockCode()));
+        return Flux.<StockPriceUpdate>create(sink -> {
+            consumer.consumeMessages("kafka-testing",sink);
+        }).filter(update -> stockCodes.contains(update.getStockCode()));
     }
 
     Publisher<StockPriceUpdate> stockRxQuotes(List<String> stockCodes) {
