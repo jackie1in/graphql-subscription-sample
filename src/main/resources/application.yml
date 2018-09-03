@@ -2,14 +2,16 @@ spring:
   application:
     name: graphql-subscription-sample
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: 192.168.1.37:9092
     consumer:
       group-id: graphql-subscription-sample-group
       client-id: graphql-subscription-sample-consumer
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      key-deserializer: org.apache.kafka.common.serialization.ByteArrayDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.ByteArrayDeserializer
       auto-offset-reset: earliest
-
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.ByteArraySerializer
+      value-serializer: org.apache.kafka.common.serialization.ByteArraySerializer
 server:
   port: 8000
 

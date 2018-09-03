@@ -12,9 +12,6 @@ type Query {
 
 type Subscription {
     stockFluxQuotes(stockCodes:[String]) : StockPriceUpdate!
-    stockRxQuotes(stockCodes:[String]) : StockPriceUpdate!
-    stockFlux2RxQuotes(stockCodes:[String]) : StockPriceUpdate!
-    stockRx2FluxQuotes(stockCodes:[String]) : StockPriceUpdate!
 }
 
 type StockPriceUpdate {
