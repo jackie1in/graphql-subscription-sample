@@ -25,7 +25,6 @@ repositories {
     maven { url "http://192.168.1.250:8081/nexus/content/repositories/central" }
     maven { url "http://192.168.1.250:8081/nexus/content/repositories/releases" }
     maven { url "http://192.168.1.250:8081/nexus/content/repositories/snapshots" }
-    maven { url 'http://repo.spring.io/milestone' }
     mavenCentral()
 }
 dependencies {
@@ -37,14 +36,11 @@ dependencies {
 
     compile("com.graphql-java:graphiql-spring-boot-starter:$GRAPHQL_SPRING_BOOT_STARTER_VERSION")
 
-    compile "io.reactivex.rxjava2:rxjava:2.1.5"
-
     compile("org.springframework.boot:spring-boot-starter-web:$springBootVersion")
 
     testCompile "org.springframework.boot:spring-boot-starter-test:$springBootVersion"
 
-    compile 'org.springframework.kafka:spring-kafka:2.1.8.RELEASE'
+    compile "org.springframework.kafka:spring-kafka:$SPRING_KAFKA_VERSION"
 
-    // a adapter for spring reactor and rxjava2
-    compile 'io.projectreactor.addons:reactor-adapter:3.1.6.RELEASE'
+    compile "io.projectreactor:reactor-core:$REACTOR_VERSION"
 }

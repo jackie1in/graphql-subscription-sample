@@ -1,16 +1,9 @@
 package com.bdgx;
 
-import graphql.servlet.GraphQLInvocationInputFactory;
-import graphql.servlet.GraphQLObjectMapper;
-import graphql.servlet.GraphQLQueryInvoker;
-import graphql.servlet.GraphQLWebsocketServlet;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration;
-import org.springframework.context.annotation.Bean;
-import reactor.core.publisher.ConnectableFlux;
 import reactor.core.publisher.Flux;
 
 @SpringBootApplication(exclude = KafkaAutoConfiguration.class)
@@ -30,11 +23,5 @@ public class SubscriptionSampleApplication {
         Flux<Integer> autoCo2 = source.publish().autoConnect();
         System.out.println("subscribing second");
         autoCo2.subscribe(System.out::println, e -> {}, () -> {});
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
-    public GraphQLWebsocketServlet graphQLWebsocketServlet(GraphQLInvocationInputFactory invocationInputFactory, GraphQLQueryInvoker queryInvoker, GraphQLObjectMapper graphQLObjectMapper) {
-        return new MyServlet(queryInvoker, invocationInputFactory, graphQLObjectMapper);
     }
 }
