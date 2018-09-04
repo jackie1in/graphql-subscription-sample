@@ -33,4 +33,13 @@ hotSource.onNext("orange");
 hotSource.onNext("purple");
 hotSource.onComplete();
 ```
+output
+```
+Subscriber 1 to Hot Source: BLUE
+Subscriber 1 to Hot Source: GREEN
+Subscriber 1 to Hot Source: ORANGE
+Subscriber 2 to Hot Source: ORANGE
+Subscriber 1 to Hot Source: PURPLE
+Subscriber 2 to Hot Source: PURPLE
+```
 [网页访问](http://localhost:8000/)
