@@ -18,15 +18,13 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-@Component
 public class StockTickerPublisher {
 
     private static final Logger LOG = LoggerFactory.getLogger(StockTickerPublisher.class);
 
-    @Autowired
     private SampleProducer producer;
-    public StockTickerPublisher() {
-
+    public StockTickerPublisher(SampleProducer producer) {
+        this.producer = producer;
         ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
         executorService.scheduleAtFixedRate(newStockTick(producer), 0, 5, TimeUnit.SECONDS);
     }

@@ -2,7 +2,6 @@ package com.bdgx.resolvers;
 
 import com.bdgx.kafka.sample.SampleConsumer;
 import com.coxautodev.graphql.tools.GraphQLSubscriptionResolver;
-import graphql.schema.DataFetchingEnvironment;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +16,6 @@ public class Subscription implements GraphQLSubscriptionResolver {
     @Autowired
     private SampleConsumer sampleConsumer;
     Publisher<StockPriceUpdate> stockFluxQuotes(List<String> stockCodes) {
-       return sampleConsumer.getFlux().publish().autoConnect().filter(update -> stockCodes.contains(update.getStockCode()));
+       return sampleConsumer.getFlux().filter(update -> stockCodes.contains(update.getStockCode()));
     }
 }

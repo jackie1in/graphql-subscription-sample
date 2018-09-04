@@ -11,19 +11,26 @@ kafka server地址
 ```
 localhost:9092
 ```
-#### flux 消息分发
-[flux broadcast文档](http://projectreactor.io/docs/core/release/reference/#advanced-broadcast-multiple-subscribers-connectableflux)
+#### Hot publishers
+>[Hot publishers](http://projectreactor.io/docs/core/release/reference/#reactor.hotCold), on the other hand, do not depend on any number of subscribers. They might start publishing data right away and would continue doing so whenever a new Subscriber comes in (in which case said subscriber would only see new elements emitted after it subscribed). For hot publishers, something does indeed happen before you subscribe.
+
 ```
-Flux<Integer> source = Flux.range(1, 3)
-                .doOnSubscribe(s -> System.out.println("subscribed to source"));
+UnicastProcessor<String> hotSource = UnicastProcessor.create();
 
-        Flux<Integer> autoCo1 = source.publish().autoConnect();
+Flux<String> hotFlux = hotSource.publish()
+                                .autoConnect()
+                                .map(String::toUpperCase);
 
-        autoCo1.subscribe(System.out::println, e -> {}, () -> {});
-        System.out.println("subscribed first");
-        Thread.sleep(500);
-        Flux<Integer> autoCo2 = source.publish().autoConnect();
-        System.out.println("subscribing second");
-        autoCo2.subscribe(System.out::println, e -> {}, () -> {});
+
+hotFlux.subscribe(d -> System.out.println("Subscriber 1 to Hot Source: "+d));
+
+hotSource.onNext("blue");
+hotSource.onNext("green");
+
+hotFlux.subscribe(d -> System.out.println("Subscriber 2 to Hot Source: "+d));
+
+hotSource.onNext("orange");
+hotSource.onNext("purple");
+hotSource.onComplete();
 ```
 [网页访问](http://localhost:8000/)

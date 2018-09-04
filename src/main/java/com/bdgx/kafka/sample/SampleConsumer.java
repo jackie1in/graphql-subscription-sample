@@ -7,6 +7,7 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
+import reactor.core.publisher.UnicastProcessor;
 
 import java.io.IOException;
 
@@ -19,11 +20,13 @@ import java.io.IOException;
 @Component
 public class SampleConsumer {
     private static final ObjectMapper objectMapper = new ObjectMapper();
-    private FluxSink<StockPriceUpdate> fluxSink;
+    private UnicastProcessor<StockPriceUpdate> hotSource;
     private final Flux<StockPriceUpdate> flux;
 
     public SampleConsumer() {
-        this.flux = Flux.<StockPriceUpdate>create(emitter -> fluxSink = emitter).log().doOnSubscribe(s -> System.out.println("又订阅了一个"));
+        UnicastProcessor<StockPriceUpdate> hotSource = UnicastProcessor.create();
+        this.hotSource = hotSource;
+        this.flux = hotSource.publish().autoConnect().log().doOnSubscribe(s -> System.out.println("又订阅了一个"));
     }
 
     /**
@@ -35,10 +38,8 @@ public class SampleConsumer {
     @SuppressWarnings("unchecked")
     @KafkaListener(topics = "kafka-testing", groupId = "#{T(java.net.InetAddress).getLocalHost().getHostName()}")
     public void consume(@Payload byte[] payload) throws IOException {
-        if (fluxSink != null) {
             StockPriceUpdate update = objectMapper.readValue(payload, StockPriceUpdate.class);
-            fluxSink.next(update);
-        }
+            hotSource.onNext(update);
     }
 
     public Flux<StockPriceUpdate> getFlux() {

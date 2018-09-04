@@ -1,6 +1,7 @@
 package com.bdgx.kafka;
 
 import com.bdgx.kafka.sample.SampleProducer;
+import com.bdgx.kafka.sample.StockTickerPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -16,5 +17,10 @@ public class KafkaConfiguration {
     @Bean
     public SampleProducer producer(KafkaTemplate<byte[],byte[]> kafkaTemplate){
         return new SampleProducer(kafkaTemplate);
+    }
+
+    @Bean
+    public StockTickerPublisher stockTickerPublisher(SampleProducer sampleProducer){
+        return new StockTickerPublisher(sampleProducer);
     }
 }
