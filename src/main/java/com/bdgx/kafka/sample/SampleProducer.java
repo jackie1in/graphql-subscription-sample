@@ -10,11 +10,12 @@ import org.springframework.stereotype.Component;
 
 import java.time.format.DateTimeFormatter;
 
+/**
+ * 消息生产者
+ */
 public class SampleProducer {
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private static final Logger log = LoggerFactory.getLogger(SampleProducer.class.getName());
-
-    private final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
 
     private final KafkaTemplate<byte[],byte[]> kafkaTemplate;
 

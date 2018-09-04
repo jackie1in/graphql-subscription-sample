@@ -2,7 +2,7 @@ spring:
   application:
     name: graphql-subscription-sample
   kafka:
-    bootstrap-servers: 192.168.1.37:9092
+    bootstrap-servers: localhost:9092
     consumer:
       group-id: graphql-subscription-sample-group
       client-id: graphql-subscription-sample-consumer

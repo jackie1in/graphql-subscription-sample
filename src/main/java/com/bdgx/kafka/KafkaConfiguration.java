@@ -1,7 +1,10 @@
 package com.bdgx.kafka;
 
+import com.bdgx.kafka.sample.SampleConsumer;
 import com.bdgx.kafka.sample.SampleProducer;
-import com.bdgx.kafka.sample.StockTickerPublisher;
+import com.bdgx.kafka.sample.StockScheduler;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -20,7 +23,13 @@ public class KafkaConfiguration {
     }
 
     @Bean
-    public StockTickerPublisher stockTickerPublisher(SampleProducer sampleProducer){
-        return new StockTickerPublisher(sampleProducer);
+    public StockScheduler stockTickerPublisher(SampleProducer sampleProducer){
+        return new StockScheduler(sampleProducer);
+    }
+
+    @Bean
+    @ConditionalOnClass(KafkaAutoConfiguration.class)
+    public SampleConsumer sampleConsumer(){
+        return new SampleConsumer();
     }
 }

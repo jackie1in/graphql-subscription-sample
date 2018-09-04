@@ -3,8 +3,6 @@ package com.bdgx.kafka.sample;
 import com.bdgx.resolvers.StockPriceUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -18,12 +16,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class StockTickerPublisher {
+public class StockScheduler {
 
-    private static final Logger LOG = LoggerFactory.getLogger(StockTickerPublisher.class);
+    private static final Logger LOG = LoggerFactory.getLogger(StockScheduler.class);
 
     private SampleProducer producer;
-    public StockTickerPublisher(SampleProducer producer) {
+    public StockScheduler(SampleProducer producer) {
         this.producer = producer;
         ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
         executorService.scheduleAtFixedRate(newStockTick(producer), 0, 5, TimeUnit.SECONDS);
